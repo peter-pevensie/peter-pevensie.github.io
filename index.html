@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Surprise</title>
+    <style>
+        body {
+            /* font-family: "Courier New", monospace; */
+            font-family: "Georgia", "Times New Roman", "Merriweather", "Palatino", serif;
+            /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, san-serif; */
+            background-color: #111;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0 10vw; /* Add horizontal padding to body for spacing */
+            text-align: center;
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        .password-display {
+            font-size: 3vw; /* Use viewport width for better scaling */
+            font-weight: bold;
+            letter-spacing: 5px;
+            /* border-bottom: 2px solid white; */
+            display: inline-block;
+            padding: 5px 10px;
+            min-width: 150px;
+        }
+        .letter {
+            display: none;
+            font-size: 18px;
+            line-height: 1.5;
+            color: white;
+            margin-top: 20px;
+            border-top: 1px solid white;
+            padding-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+            .password-display {
+                font-size: 5vw; /* Adjust font size for smaller screens */
+            }
+            .letter {
+                font-size: 3dvh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            .password-display {
+                font-size: 7vw; /* Even smaller font size for mobile devices */
+            }
+            .letter {
+                font-size: 5vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Password Section -->
+        <div id="passwordContainer">
+            <h2 id="passwordHeading">I AM <br><span class="password-display" id="passwordDisplay">_ _ _ _</span><br> LOCKED</h2>
+        </div>
+
+        <!-- Valentine's Letter -->
+        <div class="letter" id="letter">
+            <h2>Well done! தேவதர்ஷினி 🕵️‍♀️</h2>
+            <p>You found my letter! <br> </p>
+            <p>And you solved the puzzle. <br></p>
+            <p>Surely you're interested to know who I am. <br></p>
+            <p>Let's meet. Tonight <b>@Kedaram 19:00<b> <br></p>
+            <p>Your Secret Admirer ;) <br> </p>
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "SHER"; // Only the first 4 letters
+        let enteredPassword = "";
+
+        document.addEventListener("keydown", function(event) {
+            if (/^[a-zA-Z]$/.test(event.key)) {  // Accept only letters
+                if (enteredPassword.length < correctPassword.length) {
+                    enteredPassword += event.key.toUpperCase();
+                    updatePasswordDisplay();
+                }
+            }
+            if (event.key === "Backspace") { // Allow backspace
+                enteredPassword = enteredPassword.slice(0, -1);
+                updatePasswordDisplay();
+            }
+        });
+
+        function sendNotification() {
+            const botToken = "7784254646:AAHRkRRu2x7TH-kK2ROtKtIhhvx7xstLnZI";  // Replace with your bot token 
+            const chatId = 5153513975;      // Replace with your chat ID 
+
+            // Get current date and time
+            const now = new Date();
+            const formattedTime = now.toLocaleString("en-US", { 
+                timeZone: "Asia/Kolkata", // Change this to your timezone if needed
+                hour: "2-digit", 
+                minute: "2-digit", 
+                second: "2-digit", 
+                hour12: true 
+            });
+            
+            const formattedDate = now.toLocaleDateString("en-US", { 
+                timeZone: "Asia/Kolkata",
+                year: "numeric", 
+                month: "long", 
+                day: "numeric"
+            });
+
+            const message = `🎉 She has opened the Valentine's surprise! ❤️\n\n📅 Date: ${formattedDate}\n\n⏰ Time: ${formattedTime}`;
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log("Notification sent:", data))
+            .catch(error => console.error("Error sending notification:", error));
+        }
+
+        function updatePasswordDisplay() {
+            const display = document.getElementById("passwordDisplay");
+            let displayText = correctPassword.split("").map((letter, index) =>
+                index < enteredPassword.length ? enteredPassword[index] : "_"
+            ).join(" ");
+            display.innerText = displayText;
+
+            if (enteredPassword === correctPassword) {
+                document.getElementById("passwordContainer").style.display = "none";
+                document.getElementById("letter").style.display = "block";
+                
+                // Send notification when she opens it
+                sendNotification();
+            }
+        }
+    </script>
+
+</body>
+</html>
