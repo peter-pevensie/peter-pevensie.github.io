@@ -106,6 +106,15 @@
         <!-- Password Section -->
         <div id="passwordContainer">
             <h2 id="passwordHeading">I AM <br><span class="password-display" id="passwordDisplay">_ _ _ _</span><br> LOCKED</h2>
+            
+            <!-- Forgot Password Link -->
+            <p><a href="javascript:void(0);" id="forgotPasswordLink">Forgot Password?</a></p>
+            <!-- Hint Message (Initially hidden) -->
+            <div class="hint" id="hintMessage" style="display:none; color: pink; font-size: 18px; padding-top: 10px;">
+                <p>Hint: Please try using a Laptop instead of your mobile to enter the password. 😊</p>
+            </div>
+            <!-- Hidden Input Field -->
+            <input type="text" id="hiddenInput" style="position: absolute; opacity: 0; z-index: -1;">
         </div>
 
         <!-- Valentine's Letter -->
@@ -124,6 +133,15 @@
         const correctPassword = "SHER"; // Only the first 4 letters
         let enteredPassword = "";
 
+        // Handle Forgot Password Link Click
+        document.getElementById("forgotPasswordLink").addEventListener("click", function() {
+            document.getElementById("hintMessage").style.display = "block"; // Show the hint message
+        });
+
+        // trigger keyboard focus on mobile
+        document.getElementById("hiddenInput").focus();
+
+        //get password
         document.addEventListener("keydown", function(event) {
             if (/^[a-zA-Z]$/.test(event.key)) {  // Accept only letters
                 if (enteredPassword.length < correctPassword.length) {
@@ -136,6 +154,7 @@
                 updatePasswordDisplay();
             }
         });
+
 
         function sendNotification() {
             const botToken = "7784254646:AAHRkRRu2x7TH-kK2ROtKtIhhvx7xstLnZI";  // Replace with your bot token 
